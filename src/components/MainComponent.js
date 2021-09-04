@@ -32,7 +32,7 @@ class Main extends Component {
                     partner={this.state.partners.filter(partner => partner.featured)[0]}
                 />
             );
-        };
+        }
 
         const CampsiteWithId = ({match}) => {
             return (

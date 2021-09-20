@@ -1,11 +1,43 @@
 import * as ActionTypes from './ActionTypes';
-import { CAMPSITES } from '../shared/campsites';
 import { baseUrl } from '../shared/baseUrl';
 
 export const addComment = comment => ({
     type: ActionTypes.ADD_COMMENT,
     payload: comment
 });
+
+export const postFeedback = (feedback) => dispatch => {
+
+    const newComment = {
+        ...feedback
+    };
+    
+    return fetch(baseUrl + 'feedback', {
+        method: 'POST',
+        body: JSON.stringify(newComment),
+        headers: {
+            'Content-type': 'application/json'
+        }
+    })
+    .then(response => {
+            if(response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => { throw error; }
+    )
+    .then(response => response.json())
+    .then(response => dispatch(addComment(response)))
+    .then(alert('Thank you for your feedback!\n' + JSON.stringify(newComment)))
+    .catch(error => {
+        console.log('post comment', error.message);
+        alert('Your comment could not be posted.\nError: ' + error.message);
+    });
+};
 
 export const postComment = (campsiteId, rating, author, text) => dispatch => {
     
